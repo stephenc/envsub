@@ -1,0 +1,8 @@
+[package]
+name = "envsub"
+version = "0.1.0"
+authors = ["Stephen Connolly <stephen.alan.connolly@gmail.com>"]
+
+[dependencies]
+getopts = "0.2"
+regex = "1"

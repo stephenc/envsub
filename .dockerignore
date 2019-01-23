@@ -1,0 +1,7 @@
+target/
+**/*.rs.bk
+Makefile
+README*
+LICENSE*
+.git/
+.gitignore
