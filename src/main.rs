@@ -10,6 +10,10 @@ extern crate core;
 extern crate getopts;
 extern crate regex;
 
+use getopts::Options;
+use regex::Captures;
+use regex::Regex;
+
 use core::borrow::Borrow;
 use std::collections::HashMap;
 use std::env;
@@ -18,15 +22,15 @@ use std::io::BufRead;
 use std::io::LineWriter;
 use std::io::Write;
 
-use getopts::Options;
-use regex::Captures;
-use regex::Regex;
-
 fn create_options() -> Options {
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu and exit");
     opts.optflag("V", "version", "print the version and exit");
-    opts.optflag("g", "greedy-defaults", "allow expansion of undefined variable defaults");
+    opts.optflag(
+        "g",
+        "greedy-defaults",
+        "allow expansion of undefined variable defaults",
+    );
     opts.optmulti(
         "v",
         "variable",
@@ -93,9 +97,9 @@ fn main() {
                     regex::escape(prefix.clone().as_str()),
                     regex::escape(suffix.clone().as_str())
                 )
-                    .as_str(),
+                .as_str(),
             )
-                .unwrap()
+            .unwrap(),
         ),
         false => None,
     };
@@ -169,35 +173,43 @@ fn main() {
         for (_, (regex, value)) in &vars {
             let val = &value.clone();
             out = regex
-                .replace_all(out.as_str(), |caps: &Captures| match caps.get(2) {
-                    Some(mat) => match mat.as_str() {
-                        ":-" => match val.borrow() {
-                            Some(v) => {
-                                if v.is_empty() {
-                                    caps.get(3).map_or("", |m| m.as_str())
-                                } else {
-                                    v.as_str()
+                .replace_all(out.as_str(), |caps: &Captures| -> String {
+                    match caps.get(2) {
+                        Some(mat) => match mat.as_str() {
+                            ":-" => match val.borrow() {
+                                Some(v) => {
+                                    if v.is_empty() {
+                                        caps.get(3).map_or("", |m| m.as_str())
+                                    } else {
+                                        v.as_str()
+                                    }
                                 }
-                            }
-                            None => caps.get(3).map_or("", |m| m.as_str()),
+                                None => caps.get(3).map_or("", |m| m.as_str()),
+                            },
+                            _ => match val.borrow() {
+                                Some(v) => v.as_str(),
+                                None => caps.get(3).map_or("", |m| m.as_str()),
+                            },
                         },
-                        _ => match val.borrow() {
+                        None => match val.borrow() {
                             Some(v) => v.as_str(),
-                            None => caps.get(3).map_or("", |m| m.as_str()),
+                            None => caps.get(0).unwrap().as_str(),
                         },
-                    },
-                    None => match val.borrow() {
-                        Some(v) => v.as_str(),
-                        None => caps.get(0).unwrap().as_str(),
-                    },
+                    }
+                    .to_string()
                 })
                 .to_string();
         }
         out = match greedy.clone() {
-            Some(regex) => regex.replace_all(
-                out.as_str(),
-                |caps: &Captures| caps.get(1).map_or("", |m| m.as_str())
-            ).to_string(),
+            Some(regex) => regex
+                .replace_all(out.as_str(), |caps: &Captures| -> String {
+                    caps.get(1)
+                        .clone()
+                        .map_or("", |m| m.as_str())
+                        .clone()
+                        .to_string()
+                })
+                .to_string(),
             None => out,
         };
         writer.write(out.as_bytes()).unwrap();
