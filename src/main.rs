@@ -26,6 +26,7 @@ fn create_options() -> Options {
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu and exit");
     opts.optflag("V", "version", "print the version and exit");
+    opts.optflag("g", "greedy-defaults", "allow expansion of undefined variable defaults");
     opts.optmulti(
         "v",
         "variable",
@@ -83,6 +84,20 @@ fn main() {
     let suffix = match matches.opt_str("s") {
         Some(v) => v,
         None => "}".to_string(),
+    };
+    let greedy = match matches.opt_present("g") {
+        true => Some(
+            Regex::new(
+                format!(
+                    r#"{}[a-zA-Z_][a-zA-Z0-9_]*:?-(.*?){}"#,
+                    regex::escape(prefix.clone().as_str()),
+                    regex::escape(suffix.clone().as_str())
+                )
+                    .as_str(),
+            )
+                .unwrap()
+        ),
+        false => None,
     };
     let vars = match matches.opt_present("v") {
         true => {
@@ -178,6 +193,13 @@ fn main() {
                 })
                 .to_string();
         }
+        out = match greedy.clone() {
+            Some(regex) => regex.replace_all(
+                out.as_str(),
+                |caps: &Captures| caps.get(1).map_or("", |m| m.as_str())
+            ).to_string(),
+            None => out,
+        };
         writer.write(out.as_bytes()).unwrap();
         writer.write("\n".as_bytes()).unwrap();
         writer.flush().unwrap();

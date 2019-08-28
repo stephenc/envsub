@@ -20,6 +20,8 @@ The program pipes stdin to stdout one line at a time applying the required subst
 +
 NOTE: If your suffix starts with `:` or `-` you will not have a good time as this will conflict with the default value separator that is internal to the pattern.
 
+`-g`, `--greedy-defaults`:: Enables greedy replacement of unmatched default values. With this option if you have `${FOO}` and there is no corresponding variable `FOO` then that will remain untouched but `${FOO:-BAR}` or `${FOO-BAR}` will be replaced as `BAR` whereas without this option they would remain untouched.
+
 `-v`, `--var`:: Only replace the named variable. _Can be specified multiple times_ if you want to replace multiple variables. If not specified then all variables from the environment can be substituted.
 
 `-V`, `--version`:: Display the program version and exit.
