@@ -11,4 +11,3 @@ FROM scratch
 COPY --from=build /home/rust/src/target/x86_64-unknown-linux-musl/release/envsub /bin/
 
 ENTRYPOINT ["/bin/envsub"]
-CMD ["--help"]

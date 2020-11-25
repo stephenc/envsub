@@ -7,7 +7,7 @@ edition = "2018"
 license = "Apache-2.0"
 homepage = "https://github.com/stephenc/envsub"
 repository = "https://github.com/stephenc/envsub"
-readme = "README.adoc"
+readme = "README.md"
 keywords = ["cli"]
 categories = ["command-line-utilities"]
 
