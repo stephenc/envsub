@@ -1,7 +1,20 @@
 [package]
 name = "envsub"
-version = "0.1.1"
+version = "0.1.2-pre"
 authors = ["Stephen Connolly <stephen.alan.connolly@gmail.com>"]
+edition = "2018"
+license = "Apache-2.0"
+homepage = "https://github.com/stephenc/envsub"
+repository = "https://github.com/stephenc/envsub"
+readme = "README.adoc"
+keywords = ["cli"]
+categories = ["command-line-utilities"]
+
+[package.metadata.release]
+sign-commit = true
+sign-tag = true
+dev-version-ext = "pre"
+tag-name = "{{version}}"
 
 [dependencies]
 getopts = "0.2"
