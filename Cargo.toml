@@ -1,6 +1,6 @@
 [package]
 name = "envsub"
-version = "0.1.2"
+version = "0.1.3-pre"
 description = "Command line utility for substituion of environment variables"
 authors = ["Stephen Connolly <stephen.alan.connolly@gmail.com>"]
 edition = "2018"
